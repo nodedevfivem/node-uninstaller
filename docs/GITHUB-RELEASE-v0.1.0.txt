@@ -1,36 +1,17 @@
 TAG: v0.1.0
-RELEASE TITLE: NODE Uninstaller v0.1.0 — Foundation & Installed Apps Preview
-
+RELEASE TITLE: NODE Uninstaller v0.1.0 — Windows Foundation (Installer Pipeline Repair)
 RELEASE DESCRIPTION:
-NODE Uninstaller — Clean Removal. Complete Control.
-Developed by NODE Development.
+NODE Uninstaller v0.1.0 is our read-only Windows application inventory foundation. It includes the official NODE Development logo and dark red/cyan WPF interface, desktop-application inventory, current-user Microsoft Store package detection, search, filters, details, and safe folder/navigation actions.
 
-This is our first Windows foundation release. It introduces the branded dark interface and a read-only installed application manager.
+This revision incorporates the CS0176 XAML event-handler fix and repairs the GitHub Actions installer build pipeline: NSIS now resolves repository paths correctly, uses a compatible installer icon, and reports packaging diagnostics on failure. Modern checkout and .NET setup actions reduce obsolete Node.js runtime warnings.
 
-WHAT'S INCLUDED
-- Official NODE Uninstaller red/cyan logo integrated into the Windows app.
-- Modern dark WPF dashboard with custom title bar, sidebar and app details.
-- Discovery of registered desktop applications (HKLM/HKCU, 32-bit and 64-bit views).
-- Discovery of current-user Microsoft Store main packages via Windows PowerShell.
-- Search, Desktop/Store filters, application counts and metadata views.
-- Open reported installation folder and copy app details.
-- Clear upcoming-feature previews for Forced Uninstall, Batch, Hunter Mode, Backups and Leftover Scanning.
+IMPORTANT: This release is source-only until GitHub Actions confirms a successful Windows build and produces installable artifacts. No application-removal, leftover-deletion, forced-uninstall, batch removal, or Hunter Mode functionality is enabled yet.
 
-IMPORTANT SAFETY NOTE
-v0.1.0 is an INVENTORY-ONLY preview. It does not uninstall applications, delete files, remove Registry keys, scan or clean leftovers. The uninstall action is intentionally disabled until the verified uninstall engine is released.
+Assets to upload AFTER a green Windows build:
+- NODE-Uninstaller-Setup-v0.1.0.exe
+- NODE-Uninstaller-v0.1.0-WINDOWS-PORTABLE.zip
+- SHA256SUMS.txt
 
-SYSTEM REQUIREMENTS
-Windows 10/11 x64. Self-contained .NET 10 distribution; no account or paid service required.
-
-TESTING STATUS
-Source is prepared. Real Windows compilation and runtime testing must be verified through GitHub Actions and a Windows PC/VM before describing this as stable.
-
-GITHUB RELEASE ASSETS TO UPLOAD AFTER A SUCCESSFUL WORKFLOW
-1. NODE-Uninstaller-Setup-v0.1.0.exe
-2. NODE-Uninstaller-v0.1.0-WINDOWS-PORTABLE.zip
-3. SHA256SUMS.txt
-
-Optional source distribution:
-4. NODE-Uninstaller-v0.1.0-FULL-SOURCE.zip
-
-The assets above are OUTPUT NAMES, not already-built EXE files in this source package.
+Source delivery:
+- NODE-Uninstaller-v0.1.0-INSTALLER-BUILD-REPAIR-FULL-SOURCE.zip
+- NODE-Uninstaller-v0.1.0-INSTALLER-BUILD-REPAIR-UPDATE-ONLY.zip

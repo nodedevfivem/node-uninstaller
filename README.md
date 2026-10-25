@@ -66,3 +66,7 @@ For packaging, run the publish command in `.github/workflows/build-windows.yml` 
 **Planned future modules:** official uninstaller execution, confidence-scored leftover scan, explicit approval, backup/recovery, forced removal, batch, Hunter Mode, standalone previous-app leftovers, secure update checks.
 
 Before adding a destructive feature, design dry-run mode and protected-path / shared-component checks, and test in a VM.
+
+## Installer packaging repair (October 25, 2026)
+
+GitHub Actions run #2 compiled/published the Windows WPF app, but NSIS installer packaging failed. This source includes corrected root-relative installer paths and an NSIS-compatible BMP-backed icon, plus better build diagnostics. See `BUILD-REPAIR-INSTRUCTIONS.md` for applying the update and limitations of local verification.
