@@ -1,0 +1,92 @@
+name: Build NODE Uninstaller (Windows)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'installer/**'
+      - '.github/workflows/build-windows.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Windows x64 self-contained app + installer
+    runs-on: windows-latest
+    steps:
+      - name: Checkout complete source
+        uses: actions/checkout@v4
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore for Windows x64
+        run: dotnet restore src/NODE.Uninstaller/NODE.Uninstaller.csproj --runtime win-x64
+
+      - name: Build Release
+        run: dotnet build src/NODE.Uninstaller/NODE.Uninstaller.csproj --configuration Release --runtime win-x64 --no-restore
+
+      - name: Publish self-contained Windows app
+        shell: pwsh
+        run: |
+          dotnet publish src/NODE.Uninstaller/NODE.Uninstaller.csproj `
+            --configuration Release --runtime win-x64 --self-contained true `
+            --output dist/NODE-Uninstaller `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:DebugSymbols=false -p:DebugType=None
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (-not (Test-Path 'dist/NODE-Uninstaller/NODE.Uninstaller.exe')) {
+            throw 'Expected application EXE not found.'
+          }
+
+      - name: Create portable ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/NODE-Uninstaller/* `
+            -DestinationPath dist/NODE-Uninstaller-v0.1.0-WINDOWS-PORTABLE.zip -Force
+
+      - name: Install NSIS
+        shell: pwsh
+        run: |
+          choco install nsis --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          $nsis = 'C:\Program Files (x86)\NSIS\makensis.exe'
+          if (-not (Test-Path $nsis)) { throw 'NSIS compiler was not installed.' }
+          & $nsis 'installer\NODE-Uninstaller.nsi'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (-not (Test-Path 'dist/NODE-Uninstaller-Setup-v0.1.0.exe')) {
+            throw 'Expected installer EXE not found.'
+          }
+
+      - name: Generate SHA256 checksums
+        shell: pwsh
+        run: |
+          $files = @(
+            'dist/NODE-Uninstaller-Setup-v0.1.0.exe',
+            'dist/NODE-Uninstaller-v0.1.0-WINDOWS-PORTABLE.zip'
+          )
+          $lines = $files | ForEach-Object {
+            $hash = Get-FileHash $_ -Algorithm SHA256
+            "$($hash.Hash) *$([System.IO.Path]::GetFileName($_))"
+          }
+          $lines | Set-Content -Path 'dist/SHA256SUMS.txt' -Encoding ascii
+
+      - name: Upload downloadable Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: NODE-Uninstaller-v0.1.0-Windows-Build
+          path: |
+            dist/NODE-Uninstaller-Setup-v0.1.0.exe
+            dist/NODE-Uninstaller-v0.1.0-WINDOWS-PORTABLE.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
