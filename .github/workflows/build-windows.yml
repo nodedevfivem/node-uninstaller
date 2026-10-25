@@ -18,10 +18,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout complete source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install .NET 10 SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
@@ -61,11 +61,22 @@ jobs:
         run: |
           $nsis = 'C:\Program Files (x86)\NSIS\makensis.exe'
           if (-not (Test-Path $nsis)) { throw 'NSIS compiler was not installed.' }
-          & $nsis 'installer\NODE-Uninstaller.nsi'
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          if (-not (Test-Path 'dist/NODE-Uninstaller-Setup-v0.1.0.exe')) {
-            throw 'Expected installer EXE not found.'
+          # Fail early with a readable message instead of misleading NSIS file lookup errors.
+          if (-not (Test-Path 'dist/NODE-Uninstaller/NODE.Uninstaller.exe')) {
+            throw 'Windows publish payload is missing; cannot build installer.'
           }
+          if (-not (Test-Path 'src/NODE.Uninstaller/Assets/NODE-Uninstaller-NSIS.ico')) {
+            throw 'NSIS-compatible application icon is missing from GitHub.'
+          }
+          New-Item -ItemType Directory -Force -Path 'dist/build-logs' | Out-Null
+          # /NOCD preserves the repo-root compiler working directory. The NSIS script
+          # also anchors itself using !cd, so manual/local builds are safe too.
+          & $nsis /NOCD /V4 'installer\NODE-Uninstaller.nsi' 2>&1 |
+            Tee-Object -FilePath 'dist/build-logs/NSIS-build.log'
+          if ($LASTEXITCODE -ne 0) { throw "NSIS packaging failed with code $LASTEXITCODE; inspect NSIS-build.log" }
+          $setup = 'dist/NODE-Uninstaller-Setup-v0.1.0.exe'
+          if (-not (Test-Path $setup)) { throw "Expected installer EXE not found: $setup" }
+          if ((Get-Item $setup).Length -lt 65536) { throw 'Installer EXE is unexpectedly small.' }
 
       - name: Generate SHA256 checksums
         shell: pwsh
@@ -79,6 +90,15 @@ jobs:
             "$($hash.Hash) *$([System.IO.Path]::GetFileName($_))"
           }
           $lines | Set-Content -Path 'dist/SHA256SUMS.txt' -Encoding ascii
+
+      - name: Upload NSIS diagnostics if build fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NODE-Uninstaller-v0.1.0-Build-Diagnostics
+          path: dist/build-logs/NSIS-build.log
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Upload downloadable Windows build
         uses: actions/upload-artifact@v4
