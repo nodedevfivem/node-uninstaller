@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>NODE.Uninstaller</AssemblyName>
+    <RootNamespace>NODE.Uninstaller</RootNamespace>
+    <ApplicationIcon>Assets\NODE-Uninstaller.ico</ApplicationIcon>
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <Company>NODE Development</Company>
+    <Product>NODE Uninstaller</Product>
+    <Description>NODE Uninstaller - Installed application inventory foundation.</Description>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets\NODE-Uninstaller-UI.png" />
+    <None Include="Assets\NODE-Uninstaller-Official-Logo.png" CopyToOutputDirectory="Never" />
+  </ItemGroup>
+</Project>
