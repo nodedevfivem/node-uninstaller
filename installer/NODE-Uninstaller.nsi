@@ -1,6 +1,9 @@
 ; NODE Uninstaller v0.1.0 installer. Build from repository root using:
 ; "C:\Program Files (x86)\NSIS\makensis.exe" installer\NODE-Uninstaller.nsi
 ; Compile AFTER dotnet publish creates dist\NODE-Uninstaller\NODE.Uninstaller.exe.
+; Path safety: makensis otherwise changes the working directory to installer\
+; which breaks root-relative src\ and dist\ paths.
+!cd "${__FILEDIR__}\.."
 
 Unicode true
 !include "MUI2.nsh"
@@ -19,8 +22,8 @@ SetCompressor /SOLID lzma
 ShowInstDetails show
 ShowUninstDetails show
 
-!define MUI_ICON "src\NODE.Uninstaller\Assets\NODE-Uninstaller.ico"
-!define MUI_UNICON "src\NODE.Uninstaller\Assets\NODE-Uninstaller.ico"
+!define MUI_ICON "src\NODE.Uninstaller\Assets\NODE-Uninstaller-NSIS.ico"
+!define MUI_UNICON "src\NODE.Uninstaller\Assets\NODE-Uninstaller-NSIS.ico"
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_DIRECTORY
@@ -31,6 +34,8 @@ ShowUninstDetails show
 !insertmacro MUI_LANGUAGE "English"
 
 Section "NODE Uninstaller" MainSection
+  SetRegView 64
+  SetShellVarContext all
   SetOutPath "$INSTDIR"
   File /r "dist\NODE-Uninstaller\*.*"
   CreateDirectory "$SMPROGRAMS\NODE Development"
@@ -43,12 +48,14 @@ Section "NODE Uninstaller" MainSection
   WriteRegStr HKLM "${UNINSTALL_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
   WriteRegStr HKLM "${UNINSTALL_KEY}" "DisplayIcon" "$INSTDIR\NODE.Uninstaller.exe"
   WriteRegStr HKLM "${UNINSTALL_KEY}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "${UNINSTALL_KEY}" "UninstallString" '$\"$INSTDIR\Uninstall-NODE-Uninstaller.exe$\"'
+  WriteRegStr HKLM "${UNINSTALL_KEY}" "UninstallString" '"$INSTDIR\Uninstall-NODE-Uninstaller.exe"'
   WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoModify" 1
   WriteRegDWORD HKLM "${UNINSTALL_KEY}" "NoRepair" 1
 SectionEnd
 
 Section "Uninstall"
+  SetRegView 64
+  SetShellVarContext all
   Delete "$SMPROGRAMS\NODE Development\NODE Uninstaller.lnk"
   RMDir "$SMPROGRAMS\NODE Development"
   Delete "$DESKTOP\NODE Uninstaller.lnk"
