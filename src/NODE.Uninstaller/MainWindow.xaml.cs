@@ -256,7 +256,7 @@ public partial class MainWindow : Window
         try { DragMove(); } catch (InvalidOperationException) { }
     }
 
-    private static void IgnoreTitleDrag(object sender, MouseButtonEventArgs e) => e.Handled = true;
+    private void IgnoreTitleDrag(object sender, MouseButtonEventArgs e) => e.Handled = true;
     private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
     private void Maximize_Click(object sender, RoutedEventArgs e) => ToggleMaximize();
     private void Close_Click(object sender, RoutedEventArgs e) => Close();
