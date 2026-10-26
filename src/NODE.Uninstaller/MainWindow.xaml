@@ -4,6 +4,7 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="NODE Uninstaller" Width="1440" Height="880" MinWidth="1100" MinHeight="690"
         WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{StaticResource AppBackground}"
+        SourceInitialized="Window_SourceInitialized" StateChanged="Window_StateChanged"
         Loaded="Window_Loaded" Closing="Window_Closing">
   <shell:WindowChrome.WindowChrome>
     <shell:WindowChrome CaptionHeight="0" CornerRadius="0" GlassFrameThickness="0" ResizeBorderThickness="7" UseAeroCaptionButtons="False" />
@@ -41,6 +42,12 @@
           </ControlTemplate>
         </Setter.Value>
       </Setter>
+    </Style>
+    <Style TargetType="ListBox">
+      <Setter Property="Background" Value="{StaticResource PanelBackground}" />
+      <Setter Property="Foreground" Value="{StaticResource TextStrong}" />
+      <Setter Property="BorderBrush" Value="{StaticResource LineBrush}" />
+      <Setter Property="BorderThickness" Value="0" />
     </Style>
     <Style x:Key="ScrollItem" TargetType="ListBoxItem">
       <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -147,10 +154,10 @@
               <Border Background="#142638" BorderBrush="#27516A" BorderThickness="1" CornerRadius="8" Padding="10,8">
                 <StackPanel Orientation="Horizontal">
                   <Ellipse Width="8" Height="8" Fill="#3DE0B2" Margin="0,0,8,0" />
-                  <TextBlock Text="READ-ONLY INVENTORY" Foreground="#A7F1D5" FontWeight="SemiBold" FontSize="10" />
+                  <TextBlock Text="STANDARD UNINSTALL ENABLED" Foreground="#A7F1D5" FontWeight="SemiBold" FontSize="10" />
                 </StackPanel>
               </Border>
-              <TextBlock Text="v0.1.0  •  FOUNDATION BUILD" Foreground="#728BA9" FontSize="10" Margin="1,14,0,0" />
+              <TextBlock Text="v0.1.1  •  PORTABLE BUILD" Foreground="#728BA9" FontSize="10" Margin="1,14,0,0" />
               <TextBlock Text="Clean Removal. Complete Control." Foreground="#5B7695" FontSize="10" Margin="1,5,0,0" />
             </StackPanel>
           </Border>
@@ -174,7 +181,7 @@
             <TextBlock Text="NODE / " Foreground="#6588A6" FontSize="12" FontWeight="SemiBold" />
             <TextBlock Text="APPLICATION MANAGER" Foreground="#DDEBFF" FontSize="12" FontWeight="SemiBold" />
             <Border Background="#11283B" BorderBrush="#236C8D" BorderThickness="1" CornerRadius="8" Margin="17,0,0,0" Padding="10,4">
-              <TextBlock Text="PREVIEW RELEASE  ·  0.1.0" Foreground="{StaticResource AccentCyan}" FontSize="10" FontWeight="SemiBold" />
+              <TextBlock Text="PORTABLE RELEASE  ·  0.1.1" Foreground="{StaticResource AccentCyan}" FontSize="10" FontWeight="SemiBold" />
             </Border>
           </StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" MouseLeftButtonDown="IgnoreTitleDrag">
@@ -189,7 +196,7 @@
           <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
           <StackPanel>
             <TextBlock x:Name="PageHeading" Text="Installed applications" Foreground="{StaticResource TextStrong}" FontWeight="Bold" FontSize="30" />
-            <TextBlock x:Name="PageDescription" Text="Discover your software. Removal tools are introduced in upcoming updates." Foreground="{StaticResource TextMuted}" FontSize="13" Margin="1,8,0,0" />
+            <TextBlock x:Name="PageDescription" Text="Run official uninstallers, or explore installed software on this PC." Foreground="{StaticResource TextMuted}" FontSize="13" Margin="1,8,0,0" />
           </StackPanel>
           <Button Grid.Column="1" x:Name="RefreshButton" Content="↻  Refresh inventory" Style="{StaticResource OutlineActionButton}" VerticalAlignment="Center" Click="Refresh_Click" />
         </Grid>
@@ -261,8 +268,11 @@
                 </Border>
                 <Grid Grid.Row="2" Margin="6,5,6,7">
                   <ListBox x:Name="AppList" SelectionChanged="AppList_SelectionChanged" ItemContainerStyle="{StaticResource ScrollItem}"
+                           Background="{StaticResource PanelBackground}" Foreground="{StaticResource TextStrong}"
+                           BorderThickness="0" Padding="0" FocusVisualStyle="{x:Null}"
                            VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
-                           ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                           ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"
+                           ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                       <DataTemplate>
                         <Grid Height="48">
@@ -318,7 +328,7 @@
                           </Grid>
                         </Border>
                         <Border Background="#103C41" HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="12" Padding="11,5" Margin="0,4,0,0">
-                          <TextBlock Text="INVENTORY ONLY" Foreground="#4BF5C3" FontSize="9" FontWeight="Bold" />
+                          <TextBlock Text="STANDARD UNINSTALL" Foreground="#4BF5C3" FontSize="9" FontWeight="Bold" />
                         </Border>
                       </Grid>
                       <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" FontSize="19" Margin="0,14,0,0" />
@@ -341,7 +351,8 @@
                   </Grid>
                 </ScrollViewer>
                 <StackPanel Grid.Row="2" Margin="0,14,0,0">
-                  <Button Content="Uninstall   ·   Available in v0.1.1" Style="{StaticResource SolidActionButton}" IsEnabled="False" />
+                  <TextBlock x:Name="UninstallAvailabilityText" Text="Select an application to view available actions" Foreground="#8DA6BF" FontSize="10" TextWrapping="Wrap" Margin="0,0,0,8" />
+                  <Button x:Name="UninstallButton" Content="Uninstall selected application" Style="{StaticResource SolidActionButton}" IsEnabled="False" Click="Uninstall_Click" />
                   <Button x:Name="OpenFolderButton" Content="Open installation folder" Style="{StaticResource OutlineActionButton}" Margin="0,9,0,0" Click="OpenFolder_Click" IsEnabled="False" />
                   <Button x:Name="CopyDetailsButton" Content="Copy application details" Style="{StaticResource OutlineActionButton}" Margin="0,9,0,0" Click="CopyDetails_Click" IsEnabled="False" />
                 </StackPanel>
@@ -359,7 +370,7 @@
                 <TextBlock x:Name="UpcomingModuleTitle" Text="Coming in a future update" FontWeight="Bold" FontSize="29" Foreground="#F1F7FF" TextAlignment="Center" Margin="0,27,0,0" />
                 <TextBlock x:Name="UpcomingModuleBody" Text="This module is planned." Foreground="#9EB9D0" FontSize="15" TextAlignment="Center" TextWrapping="Wrap" Margin="0,15,0,0" />
                 <Border Background="#102F36" BorderBrush="#27665D" BorderThickness="1" CornerRadius="10" Padding="16,12" Margin="0,33,0,0">
-                  <TextBlock Text="This v0.1.0 build does not remove applications or modify Windows. No uninstall or cleanup actions are active." Foreground="#A9E7D0" FontSize="12" TextAlignment="Center" TextWrapping="Wrap" />
+                  <TextBlock Text="v0.1.1 runs registered uninstallers only after confirmation. Advanced cleanup tools remain inactive; no leftovers are deleted automatically." Foreground="#A9E7D0" FontSize="12" TextAlignment="Center" TextWrapping="Wrap" />
                 </Border>
               </StackPanel>
             </Grid>
@@ -374,6 +385,67 @@
           </StackPanel>
           <TextBlock Grid.Column="1" Text="LOCAL FIRST  ·  NO ACCOUNT  ·  NO SUBSCRIPTION" Foreground="#57718F" FontSize="10" VerticalAlignment="Center" />
         </Grid>
+      </Grid>
+
+      <!-- Explicit confirmation before any external uninstall process is started. -->
+      <Grid x:Name="UninstallConfirmOverlay" Grid.ColumnSpan="2" Background="#E4050A13"
+            Visibility="Collapsed" Panel.ZIndex="100">
+        <Border Width="560" MaxWidth="560" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="#121F32" BorderBrush="#FF6B81" BorderThickness="1"
+                CornerRadius="16" Padding="27">
+          <StackPanel>
+            <TextBlock Text="NODE UNINSTALLER / CONFIRM REMOVAL" Foreground="#FF8A9A" FontSize="11" FontWeight="Bold" />
+            <TextBlock x:Name="UninstallConfirmApp" Text="Selected application" Foreground="White" FontSize="23" FontWeight="Bold" Margin="0,14,0,5" TextWrapping="Wrap" />
+            <TextBlock x:Name="UninstallConfirmPublisher" Foreground="#A8C4DF" FontSize="12" TextWrapping="Wrap" />
+            <Border Background="#1B2B41" BorderBrush="#31445B" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,17,0,0">
+              <StackPanel>
+                <TextBlock Text="REGISTERED REMOVAL COMMAND" Foreground="#71CCFF" FontWeight="Bold" FontSize="10" />
+                <TextBlock x:Name="UninstallConfirmCommand" Foreground="#D2E5F8" FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap" MaxHeight="95" />
+              </StackPanel>
+            </Border>
+            <TextBlock x:Name="UninstallConfirmWarning" Foreground="#FFD099" FontSize="12" Margin="0,18,0,0" TextWrapping="Wrap" />
+            <TextBlock Text="The manufacturer's own uninstaller will run. NODE will not delete leftovers or create a restore point in this version. Cancel if you are unsure." Foreground="#B2C9DE" FontSize="12" Margin="0,14,0,21" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+              <Button Content="Cancel" Style="{StaticResource OutlineActionButton}" Click="UninstallCancel_Click" Margin="0,0,12,0" />
+              <Button x:Name="ConfirmUninstallButton" Content="Run original uninstaller" Style="{StaticResource SolidActionButton}" Click="UninstallConfirm_Click" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- Don't imply an external vendor uninstaller can safely be cancelled. -->
+      <Grid x:Name="UninstallProgressOverlay" Grid.ColumnSpan="2" Background="#E4050A13"
+            Visibility="Collapsed" Panel.ZIndex="101">
+        <Border Width="490" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="#121F32" BorderBrush="#2D779B" BorderThickness="1"
+                CornerRadius="15" Padding="27">
+          <StackPanel>
+            <TextBlock Text="NODE UNINSTALLER / EXTERNAL PROCESS" Foreground="#70CFFF" FontSize="11" FontWeight="Bold" />
+            <TextBlock x:Name="UninstallProgressTitle" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,15,0,0" TextWrapping="Wrap" />
+            <ProgressBar IsIndeterminate="True" Height="7" Margin="0,22,0,18" Foreground="#36C9FC" Background="#233850" />
+            <TextBlock Text="Complete the publisher's uninstall wizard if one is open. NODE is waiting for that process to exit." Foreground="#AFC5DF" FontSize="12" TextWrapping="Wrap" />
+            <Button Content="Stop monitoring (do not cancel uninstall)" Style="{StaticResource OutlineActionButton}" Margin="0,20,0,0" Click="StopMonitoring_Click" />
+            <TextBlock Text="This does not terminate the vendor's uninstaller; it may continue in the background." Foreground="#F6C988" FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- In-app dark notification dialog: avoid bright system MessageBox windows. -->
+      <Grid x:Name="NoticeOverlay" Grid.ColumnSpan="2" Background="#DB050A13"
+            Visibility="Collapsed" Panel.ZIndex="102">
+        <Border Width="485" MaxWidth="485" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="#121F32" BorderBrush="#FF4E68" BorderThickness="1"
+                CornerRadius="15" Padding="26" Effect="{x:Null}">
+          <StackPanel>
+            <TextBlock Text="NODE UNINSTALLER  /  NOTICE" Foreground="#FF778C" FontSize="11" FontWeight="Bold" />
+            <TextBlock x:Name="NoticeTitle" Text="Notice" Foreground="#F3F8FF"
+                       FontWeight="Bold" FontSize="22" Margin="0,13,0,0" TextWrapping="Wrap" />
+            <TextBlock x:Name="NoticeMessage" Foreground="#AFC5DF" FontSize="13"
+                       Margin="0,12,0,23" TextWrapping="Wrap" MaxHeight="260" />
+            <Button x:Name="NoticeOkButton" Content="OK  ·  Close" HorizontalAlignment="Right"
+                    Style="{StaticResource SolidActionButton}" Click="DismissNotice_Click" />
+          </StackPanel>
+        </Border>
       </Grid>
     </Grid>
   </Border>

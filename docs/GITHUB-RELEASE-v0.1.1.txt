@@ -1,0 +1,40 @@
+TAG:
+v0.1.1
+
+RELEASE TITLE:
+NODE Uninstaller v0.1.1 — Standard Uninstall (Portable Windows)
+
+RELEASE DESCRIPTION:
+NODE Uninstaller v0.1.1
+Developed by NODE Development
+Clean Removal. Complete Control.
+
+WHAT'S NEW:
+- Standard desktop app uninstaller support (registered EXE and MSI)
+- Full confirmation dialog before executing any removal
+- MSI product-code uninstall using Windows Installer
+- Monitors the launched uninstall process and rescans inventory
+- Explicit messages when the registered uninstaller is missing or unsupported
+- Refuses to automatically invoke script interpreters or command shells
+- No installer required: portable, self-contained Windows 10/11 x64 EXE
+
+PRESERVED:
+- Dark UI, official logo, taskbar-safe maximize/restore
+- Installed desktop and Microsoft Store app inventory
+- Search, filters, icons, details, open folder, copy information
+
+IMPORTANT SAFETY NOTES:
+- This release invokes the original uninstaller; it does not delete leftover files or Registry entries itself.
+- Microsoft Store uninstall, Forced Uninstall, Batch Uninstall, and other advanced removal tools remain disabled.
+- The app does not create a restore point or backup in v0.1.1.
+- Review the command shown in the confirmation dialog before continuing.
+- Unsigned developer build; test with disposable, noncritical software first.
+
+ASSETS TO UPLOAD AFTER A SUCCESSFUL GITHUB ACTIONS BUILD:
+NODE-Uninstaller.exe
+NODE-Uninstaller-v0.1.1-PORTABLE.zip
+SHA256SUMS.txt
+
+SOURCE ZIPs (OPTIONAL):
+NODE-Uninstaller-v0.1.1-STANDARD-UNINSTALL-FULL-SOURCE.zip
+NODE-Uninstaller-v0.1.1-STANDARD-UNINSTALL-UPDATE-ONLY.zip

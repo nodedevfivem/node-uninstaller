@@ -20,6 +20,8 @@ public sealed class InstalledApp
     public string? DisplayIconPath { get; init; }
     public string? RegistryPath { get; init; }
     public string? UninstallCommand { get; init; }
+    public bool IsWindowsInstaller { get; init; }
+    public bool IsMachineWide => RegistryPath?.StartsWith("HKLM ", StringComparison.OrdinalIgnoreCase) == true;
     public string? PackageFullName { get; init; }
     public DateTime? InstalledAt { get; init; }
     public long? ReportedSizeBytes { get; init; }

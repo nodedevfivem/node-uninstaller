@@ -99,6 +99,7 @@ public sealed class AppInventoryService
                             InstallLocation = ReadString(subkey, "InstallLocation"),
                             RegistryPath = registryPath,
                             UninstallCommand = ReadString(subkey, "UninstallString"),
+                            IsWindowsInstaller = ReadInteger(subkey, "WindowsInstaller") == 1,
                             InstalledAt = TryParseInstallDate(ReadString(subkey, "InstallDate")),
                             ReportedSizeBytes = sizeInBytes
                         });
